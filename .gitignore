@@ -1,0 +1,10 @@
+data/
+raw/
+lightning_logs/
+*.zip
+
+lightning_logs/
+checkpoints/
+*.ckpt
+wandb/
+wandb_logs/
