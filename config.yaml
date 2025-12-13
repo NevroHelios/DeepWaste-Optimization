@@ -1,0 +1,81 @@
+program: src/scripts/train.py
+method: bayes
+metric:
+  name: val_accuracy
+  goal: maximize
+
+run_cap: 50
+
+parameters:
+  base_features:
+    values: [16, 32, 64]
+  
+  strategy:
+    values: ['same', 'doubling', 'halving']
+  
+  filter_size:
+    values: [3, 5]
+  
+  conv_activation:
+    values: ['relu', 'gelu', 'silu', 'mish']
+  
+  dense_activation:
+    values: ['relu', 'gelu', 'silu', 'mish']
+  
+  num_dense:
+    values: [64, 128, 256, 512]
+  
+  include_batchnorm:
+    values: [true, false]
+  
+  dropout:
+    values: [0.0, 0.2, 0.3, 0.4]
+  
+  lr:
+    distribution: log_uniform_values
+    min: 0.0001
+    max: 0.01
+  
+  batch_size:
+    values: [16, 32, 64]
+  
+  use_augmentation:
+    values: [true, false]
+  
+  # fixed ones
+  data_dir:
+    value: 'data'
+  
+  img_size:
+    value: 128
+  
+  num_workers:
+    value: 4
+  
+  num_layers:
+    value: 5
+  
+  num_classes:
+    value: 6
+  
+  in_channels:
+    value: 3
+  
+  stride:
+    value: 1
+  
+  input_size:
+    value: 128
+  
+  padding:
+    value: 'same'
+  
+  pooling_k:
+    value: 2
+  
+  max_epochs:
+    value: 20
+
+early_terminate:
+  type: hyperband
+  min_iter: 5

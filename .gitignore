@@ -1,10 +1,13 @@
-data/
+/data/
 raw/
 lightning_logs/
 *.zip
+__pycache__
 
 lightning_logs/
 checkpoints/
 *.ckpt
 wandb/
 wandb_logs/
+
+garbage-*/
