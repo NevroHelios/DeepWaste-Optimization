@@ -13,15 +13,26 @@ class ModelLightning(pl.LightningModule):
         idx_to_class: dict,
         class_weights: Optional[torch.Tensor] = None,
         lr: float = 1e-3,
+        backbone_lr: Optional[float] = None,
+        head_params: Optional[list] = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
         self.model = model
-
         self.idx_to_class = idx_to_class
+        
+        if backbone_lr is not None and head_params is not None:
+            head_ids = set(id(p) for p in head_params)
+            backbone_params = [p for p in self.model.parameters() if id(p) not in head_ids]
+            
+            self.optimizer = torch.optim.Adam([
+                {'params': backbone_params, 'lr': backbone_lr},
+                {'params': head_params, 'lr': lr}
+            ])
+        else:
+            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
 
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.criterion = (
             nn.CrossEntropyLoss()
             if not class_weights

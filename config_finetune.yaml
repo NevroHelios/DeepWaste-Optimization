@@ -1,0 +1,42 @@
+program: src/scripts/train_finetune.py
+method: bayes
+metric:
+  name: val_accuracy
+  goal: maximize
+
+run_cap: 20
+
+parameters:
+
+  img_size:
+    value: 224
+  batch_size:
+    values: [32, 64]
+  num_workers:
+    value: 4
+
+  max_epochs:
+    values: [5, 10]
+  
+  freeze_strategy:
+    values: ['freeze_all_except_last', 'finetune_all', 'freeze_backbone_half']
+  
+  lr:
+    distribution: log_uniform_values
+    min: 0.0001
+    max: 0.01
+  
+  use_differential_lr:
+    values: [true, false]
+  
+  backbone_lr_factor:
+    values: [0.1, 0.01]
+
+  data_dir:
+    value: 'data'
+  num_classes:
+    value: 6
+
+early_terminate:
+  type: hyperband
+  min_iter: 2

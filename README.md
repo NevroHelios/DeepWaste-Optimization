@@ -51,9 +51,9 @@ Bayesian optimization with early termination (Hyperband) to efficiently explore 
 - `use_augmentation`: [true, false]
 
 **Fixed Parameters:**
-- Learning rate scheduler: ReduceLROnPlateau
 - Max epochs: 20
 - Early stopping: Hyperband (min_iter=5)
+- Augmentation: Finetuning*
 
 ### Optimization Strategy
 
@@ -141,6 +141,44 @@ The 'same' strategy (constant feature maps) with 64 base features proved suffici
 ### 5. Regularization Trade-offs
 Lower dropout (0.2) performed best despite the generalization gap, suggesting that the model benefits from retaining more information during training rather than aggressive regularization.
 
+## Finetuning with Pretrained Models
+
+We further improved performance by finetuning a pre-trained **MobileNetV3 Small** model.
+
+### Best Run: `wild-sweep-6`
+- **Validation Accuracy**: **98.17%**
+- **Hyperparameters**:
+  - `lr`: 0.000398
+  - `batch_size`: 64
+  - `img_size`: 224
+  - `freeze_strategy`: `finetune_all`
+  - `backbone_lr_factor`: 0.1
+
+### Test Set Performance (Finetuned)
+
+| Metric | Value |
+|--------|-------|
+| **Test Accuracy** | **98.41%** |
+| Test Loss | 0.075 |
+
+**Per-Class Test Metrics:**
+
+| Class | Precision | Recall | F1-Score |
+|-------|-----------|--------|----------|
+| Cardboard | 1.000 | 1.000 | 1.000 |
+| Paper | 0.984 | 1.000 | 0.992 |
+| Glass | 0.980 | 1.000 | 0.990 |
+| Metal | 0.987 | 0.975 | 0.981 |
+| Plastic | 0.969 | 0.990 | 0.979 |
+| Trash | 1.000 | 0.828 | 0.906 |
+
+## Model Comparison
+
+| Model | Test Accuracy | Best F1 Class | Worst F1 Class |
+|-------|---------------|---------------|----------------|
+| SimpleCNN (Scratch) | 85.46% | Paper (0.93) | Trash (0.73) |
+| **MobileNetV3 (Finetuned)** | **98.41%** | **Cardboard (1.00)** | **Trash (0.91)** |
+
 ## Sample Predictions
 
 ![Test Predictions Grid](notebooks/test_predictions_grid.png)
@@ -149,7 +187,7 @@ Lower dropout (0.2) performed best despite the generalization gap, suggesting th
 
 ## Future Work
 
-- Fine-tuning with pretrained models (ResNet, EfficientNet, Vision Transformers)
+- Experiment with Larger Models (ResNet50, EfficientNetV2)
 - Advanced data augmentation strategies
 - Ensemble methods
 - Addressing class imbalance if present
