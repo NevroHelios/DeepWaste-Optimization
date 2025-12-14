@@ -11,3 +11,4 @@ wandb/
 wandb_logs/
 
 garbage-*/
+exports/
