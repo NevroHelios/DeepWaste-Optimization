@@ -2,6 +2,13 @@
 
 This report details the scientific findings and explainability analysis of our Garbage Classification models. It includes visualizations of feature maps, guided backpropagation results, and hyperparameter optimization studies.
 
+## Table of Contents
+- [1. Feature Map Analysis](#1-feature-map-analysis)
+- [2. Model Explainability: Guided Backpropagation](#2-model-explainability-guided-backpropagation)
+- [3. Hyperparameter Analysis and Performance](#3-hyperparameter-analysis-and-performance)
+  - [3.1. Model Trained from Scratch](#31-model-trained-from-scratch)
+  - [3.2. Fine-Tuned Model](#32-fine-tuned-model)
+
 ## 1. Feature Map Analysis
 
 In Convolutional Neural Networks (CNNs), the initial layers typically function as low-level feature extractors. Visualizing these layers helps confirm that the model is learning meaningful patterns from the data.
