@@ -2,6 +2,22 @@
 
 A deep learning project for classifying garbage images into 6 categories: cardboard, glass, metal, paper, plastic, and trash. The model is built using PyTorch Lightning with a custom CNN architecture optimized through Bayesian hyperparameter search.
 
+## Table of Contents
+- [Dataset](#dataset)
+- [Model Architecture](#model-architecture)
+- [Hyperparameter Optimization](#hyperparameter-optimization)
+- [Results](#results)
+- [Key Observations](#key-observations)
+- [Scientific Report & Explainability](#scientific-report--explainability)
+- [Finetuning with Pretrained Models](#finetuning-with-pretrained-models)
+- [Performance Benchmark](#performance-benchmark)
+- [Sample Predictions](#sample-predictions)
+- [Future Work](#future-work)
+- [Requirements](#requirements)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [License](#license)
+
 ## Dataset
 
 - **Classes**: 6 (cardboard, glass, metal, paper, plastic, trash)
@@ -141,6 +157,17 @@ The 'same' strategy (constant feature maps) with 64 base features proved suffici
 ### 5. Regularization Trade-offs
 Lower dropout (0.2) performed best despite the generalization gap, suggesting that the model benefits from retaining more information during training rather than aggressive regularization.
 
+## Scientific Report & Explainability
+
+For a deep dive into the inner workings of our Convolutional Neural Networks, please refer to the detailed **[Scientific Report](report.md)**.
+
+Key highlights include:
+- **Feature Map Analysis**: Visualizing how the first layer detects edges and boundaries.
+- **Guided Backpropagation**: Understanding which parts of an image contribute most to classification decisions (Model Explainability).
+- **Training Dynamics**: A comparative study of hyperparameter effects on both scratch and fine-tuned models using parallel coordinates and accuracy distributions.
+
+[**> Read the Full Scientific Report**](report.md)
+
 ## Finetuning with Pretrained Models
 
 We further improved performance by finetuning a pre-trained **MobileNetV3 Small** model.
@@ -249,3 +276,42 @@ MIT
 ---
 
 *Developed using PyTorch Lightning and optimized with Weights & Biases*
+
+## Performance Benchmark
+
+We compared the inference performance of the best fine-tuned model across different environments and optimization levels.
+
+### Benchmark Setup
+- **Batch Size**: 64
+- **Image Size**: 224x224
+- **Precision**: FP32 (PyTorch/ONNX), FP16 (ONNX/TensorRT), INT8 (TensorRT)
+- **Device**: NVIDIA GPU (RTX 4050 Laptop) vs CPU
+
+### Results
+
+| Model | Latency (ms/batch) | Throughput (img/sec) | Speedup vs PyTorch GPU |
+|-------|-------------------|----------------------|-----------------------|
+| PyTorch (CPU) | 323.84 | 198 | 0.07x |
+| **PyTorch (GPU)** | **23.78** | **2692** | **1.0x (Baseline)** |
+| ONNX FP32 | 22.77 | 2810 | 1.04x |
+| ONNX FP16 | 11.70 | 5468 | 2.03x |
+| **TensorRT FP16** | **9.27** | **6905** | **2.56x** |
+| TensorRT INT8 | 9.44 | 6778 | 2.51x |
+
+![Inference Throughput Comparison](static/benchmark_plot.png)
+
+### Key Observations
+
+1.  **TensorRT Acceleration**: TensorRT FP16 provides the best performance, achieving a **2.5x speedup** over optimized PyTorch GPU inference. It is highly recommended for deployment.
+2.  **ONNX Runtime**: Converting to ONNX and using FP16 mode yields a significant **2x speedup** over PyTorch, making it a portable and fast alternative if TensorRT is not available.
+3.  **Quantization Impact**:
+    *   **FP16**: Maintained high accuracy (~98%) while doubling throughput.
+    *   **INT8**: While theoretically faster, on this specific hardware/batch size configuration, it did not provide a speedup over FP16 and suffered a significant accuracy drop (to ~64%). Therefore, **FP16 is preferred** for this model.
+4.  **CPU vs GPU**: GPU inference is approximately **13-35x faster** than CPU inference, highlighting the necessity of hardware acceleration for real-time processing.
+
+### Deployment Recommendation
+For optimal performance and reliability, deploy the **TensorRT FP16** engine. If TensorRT is not feasible, **ONNX FP16** is a robust runner-up.
+
+---
+**GitHub Repository**: [https://github.com/nevrohelios/garbage_clf](https://github.com/nevrohelios/garbage_clf)
+
