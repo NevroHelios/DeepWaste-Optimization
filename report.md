@@ -14,7 +14,7 @@ In Convolutional Neural Networks (CNNs), the initial layers typically function a
 
 ## 2. Model Explainability: Guided Backpropagation
 
-To interpret the internal representations of the network, we employed Guided Backpropagation. This method visualizes which parts of the input image activate specific neurons in deeper layers.
+To interpret the internal representations of the network, I employed Guided Backpropagation. This method visualizes which parts of the input image activate specific neurons in deeper layers.
 
 ![Guided Backprop (CONV5)](notebooks/guided%20backprop%20(CONV5).png)
 
@@ -24,7 +24,7 @@ To interpret the internal representations of the network, we employed Guided Bac
 
 ## 3. Hyperparameter Analysis and Performance
 
-We utilized Weights & Biases to track and visualize the impact of various hyperparameters on model performance. The following plots illustrate the results for both the model trained from scratch and the fine-tuned model.
+I utilized Weights & Biases to track and visualize the impact of various hyperparameters on model performance. The following plots illustrate the results for both the model trained from scratch and the fine-tuned model.
 
 ### 3.1. Model Trained from Scratch
 
@@ -32,7 +32,7 @@ We utilized Weights & Biases to track and visualize the impact of various hyperp
 ![Validation Accuracy Distribution - Scratch](static/val_acc-vs-createde-scratch.png)
 
 **Observations:**
-The parallel coordinates plot reveals the correlation between specific hyperparameter configurations (such as learning rate and batch size) and the resulting validation accuracy. The distribution plot highlights the variance in performance across different initialization and training runs.
+A batch size of 32 appears to be more effective, particularly when using Mish activation in the convolutional blocks, while the dense layers tend to favor ReLU activation. Dense layer configurations across different ranges performed comparatively better when using the `same` strategy. A dropout rate of 0.2 was selected in most high-performing configurations. Overall, higher validation performance was achieved through combinations of hyperparameters, rather than any single dominant parameter.
 
 ### 3.2. Fine-Tuned Model
 
@@ -40,4 +40,4 @@ The parallel coordinates plot reveals the correlation between specific hyperpara
 ![Validation Accuracy Distribution - Fine-Tuned](static/val_acc-vs-created-ft.png)
 
 **Observations:**
-The fine-tuning experiments demonstrate a more consistent performance profile. The plots indicate that leveraging pre-trained weights significantly stabilizes the training process, leading to higher average validation accuracy compared to the scratch model.
+The fine-tuning experiments demonstrate a more consistent performance profile. Freezing half the layers yeilded the best results. Using differential lr is preferred. The plots indicate that leveraging pre-trained weights significantly stabilizes the training process, leading to higher average validation accuracy compared to the scratch model.
